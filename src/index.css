@@ -2,95 +2,108 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* KitaConnect Design System
+   Calm, professional, mobile-first daycare app
+   Colors in HSL format */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    /* Primary: Warm teal-blue for trust and calm */
+    --primary: 180 42% 42%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 180 42% 95%;
+    --primary-hover: 180 42% 35%;
+    
+    /* Background: Warm off-white */
+    --background: 40 20% 98%;
+    --foreground: 220 20% 20%;
+    
+    /* Cards: Pure white with subtle warmth */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 220 20% 20%;
+    
+    /* Secondary: Warm sand/gray */
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 220 15% 35%;
+    
+    /* Muted: For subtle backgrounds */
+    --muted: 40 10% 92%;
+    --muted-foreground: 220 10% 50%;
+    
+    /* Accent: Soft orange for CTAs and highlights */
+    --accent: 28 85% 55%;
+    --accent-foreground: 0 0% 100%;
+    --accent-light: 28 85% 95%;
+    
+    /* Success: For positive states */
+    --success: 145 60% 40%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 145 60% 95%;
+    
+    /* Warning: For alerts */
+    --warning: 40 95% 50%;
+    --warning-foreground: 220 20% 20%;
+    --warning-light: 40 95% 95%;
+    
+    /* Destructive: For errors and critical actions */
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-light: 0 70% 95%;
+    
+    /* UI Elements */
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 180 42% 42%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --popover-foreground: 220 20% 20%;
+    
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 15% 35%;
+    --sidebar-primary: 180 42% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 15% 94%;
+    --sidebar-accent-foreground: 220 15% 35%;
+    --sidebar-border: 40 15% 90%;
+    --sidebar-ring: 180 42% 42%;
+    
+    /* Custom tokens for Kita app */
+    --nav-height: 4rem;
+    --bottom-nav-height: 4.5rem;
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 220 20% 12%;
+    --foreground: 40 10% 95%;
+    
+    --card: 220 20% 16%;
+    --card-foreground: 40 10% 95%;
+    
+    --primary: 180 45% 50%;
+    --primary-foreground: 220 20% 10%;
+    --primary-light: 180 45% 20%;
+    
+    --secondary: 220 15% 22%;
+    --secondary-foreground: 40 10% 90%;
+    
+    --muted: 220 15% 20%;
+    --muted-foreground: 40 10% 65%;
+    
+    --accent: 28 80% 55%;
+    --accent-foreground: 0 0% 100%;
+    
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 180 45% 50%;
+    
+    --popover: 220 20% 16%;
+    --popover-foreground: 40 10% 95%;
   }
 }
 
@@ -99,7 +112,88 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Safe area for mobile devices */
+  .safe-bottom {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+  }
+}
+
+@layer components {
+  /* Large touch targets for mobile */
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px] flex items-center justify-center;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .status-dot-present {
+    @apply bg-[hsl(var(--success))];
+  }
+
+  .status-dot-absent {
+    @apply bg-[hsl(var(--destructive))];
+  }
+
+  .status-dot-late {
+    @apply bg-[hsl(var(--warning))];
+  }
+
+  /* Card hover effect */
+  .card-interactive {
+    @apply transition-all duration-200 hover:shadow-md active:scale-[0.98];
+  }
+
+  /* Bottom navigation styling */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-card border-t border-border;
+    padding-bottom: var(--safe-area-bottom);
+    height: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+  }
+
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center gap-1 py-2 px-3 text-muted-foreground transition-colors;
+  }
+
+  .bottom-nav-item.active {
+    @apply text-primary;
+  }
+
+  .bottom-nav-item:active {
+    @apply bg-secondary/50;
+  }
+}
+
+@layer utilities {
+  /* Smooth scroll for iOS */
+  .scroll-smooth-ios {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Badge styles */
+  .badge-unread {
+    @apply absolute -top-1 -right-1 w-5 h-5 bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] text-xs font-semibold rounded-full flex items-center justify-center;
   }
 }
