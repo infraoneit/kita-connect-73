@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { EventCard } from '@/components/calendar/EventCard';
 import { Button } from '@/components/ui/button';
-import { calendarEvents } from '@/data/mockData';
+import { useCalendarEvents } from '@/hooks/useDatabase';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const { data: calendarEvents, isLoading } = useCalendarEvents();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -19,14 +21,28 @@ export default function CalendarPage() {
   const startDay = monthStart.getDay();
   const paddedStart = startDay === 0 ? 6 : startDay - 1; // Adjust for Monday start
 
-  const upcomingEvents = calendarEvents
-    .filter(e => new Date(e.startDate) >= new Date())
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+  const events = calendarEvents || [];
+  
+  const upcomingEvents = events
+    .filter(e => new Date(e.start_date) >= new Date())
+    .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
     .slice(0, 5);
 
   const hasEvent = (date: Date) => {
-    return calendarEvents.some(e => isSameDay(new Date(e.startDate), date));
+    return events.some(e => isSameDay(new Date(e.start_date), date));
   };
+
+  // Transform events for EventCard component
+  const transformedEvents = upcomingEvents.map(e => ({
+    id: e.id,
+    title: e.title,
+    description: e.description || undefined,
+    startDate: e.start_date,
+    endDate: e.end_date || undefined,
+    allDay: e.all_day ?? true,
+    type: e.type,
+    groupIds: [],
+  }));
 
   return (
     <div className="min-h-screen">
@@ -40,7 +56,7 @@ export default function CalendarPage() {
         }
       />
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pb-24">
         {/* Mini Calendar */}
         <section className="bg-card rounded-xl p-4 shadow-sm border border-border">
           {/* Month Navigation */}
@@ -112,11 +128,23 @@ export default function CalendarPage() {
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
             Anstehende Termine
           </h2>
-          <div className="space-y-2">
-            {upcomingEvents.map(event => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3].map(i => (
+                <Skeleton key={i} className="h-20 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : transformedEvents.length > 0 ? (
+            <div className="space-y-2">
+              {transformedEvents.map(event => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-muted/50 rounded-xl p-6 text-center">
+              <p className="text-muted-foreground">Keine anstehenden Termine.</p>
+            </div>
+          )}
         </section>
       </div>
     </div>

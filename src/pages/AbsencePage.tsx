@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { children, currentUser, groups } from '@/data/mockData';
-import { AbsenceType, Child } from '@/types/kita';
-import { ThermometerSun, Palmtree, Clock, Calendar, HelpCircle, Check } from 'lucide-react';
+import { useChildren, useCreateAbsence } from '@/hooks/useDatabase';
+import { ThermometerSun, Palmtree, Clock, Calendar, HelpCircle, Check, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { Database } from '@/integrations/supabase/types';
+
+type AbsenceType = Database['public']['Enums']['absence_type'];
 
 const absenceTypes: { type: AbsenceType; icon: React.ElementType; label: string; description: string }[] = [
   { type: 'sick', icon: ThermometerSun, label: 'Krank', description: 'Mit Fieber, Erkältung, etc.' },
@@ -21,20 +24,38 @@ const absenceTypes: { type: AbsenceType; icon: React.ElementType; label: string;
 
 export default function AbsencePage() {
   const navigate = useNavigate();
-  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const { data: children, isLoading } = useChildren();
+  const createAbsence = useCreateAbsence();
+  
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<AbsenceType | null>(null);
   const [note, setNote] = useState('');
-  
-  const userGroup = groups.find(g => g.id === currentUser.groupIds[0]);
-  const groupChildren = children.filter(c => c.groupId === userGroup?.id);
 
-  const handleSubmit = () => {
-    if (!selectedChild || !selectedType) return;
+  const selectedChild = children?.find(c => c.id === selectedChildId);
+
+  const handleSubmit = async () => {
+    if (!selectedChildId || !selectedType) return;
     
-    toast.success(`Abwesenheit für ${selectedChild.firstName} gemeldet`, {
-      description: absenceTypes.find(t => t.type === selectedType)?.label,
-    });
-    navigate('/');
+    const today = new Date().toISOString().split('T')[0];
+    
+    try {
+      await createAbsence.mutateAsync({
+        child_id: selectedChildId,
+        type: selectedType,
+        start_date: today,
+        end_date: today,
+        note: note || undefined,
+      });
+      
+      toast.success(`Abwesenheit für ${selectedChild?.first_name} gemeldet`, {
+        description: absenceTypes.find(t => t.type === selectedType)?.label,
+      });
+      navigate('/');
+    } catch (error) {
+      toast.error('Fehler beim Speichern', {
+        description: 'Bitte versuchen Sie es erneut.',
+      });
+    }
   };
 
   return (
@@ -44,49 +65,61 @@ export default function AbsencePage() {
         showBack
       />
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pb-24">
         {/* Step 1: Select Child */}
         <section>
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
             1. Kind auswählen
           </h2>
-          <div className="grid grid-cols-2 gap-2">
-            {groupChildren.map((child) => (
-              <Card
-                key={child.id}
-                className={cn(
-                  'p-3 cursor-pointer transition-all',
-                  selectedChild?.id === child.id
-                    ? 'border-2 border-primary bg-primary-light'
-                    : 'border-2 border-transparent hover:border-border'
-                )}
-                onClick={() => setSelectedChild(child)}
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                      {child.firstName[0]}{child.lastName[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground text-sm truncate">
-                      {child.firstName}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {child.lastName}
-                    </p>
-                  </div>
-                  {selectedChild?.id === child.id && (
-                    <Check size={18} className="text-primary shrink-0" />
+          {isLoading ? (
+            <div className="grid grid-cols-2 gap-2">
+              {[1, 2, 3, 4].map(i => (
+                <Skeleton key={i} className="h-16 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : children && children.length > 0 ? (
+            <div className="grid grid-cols-2 gap-2">
+              {children.map((child) => (
+                <Card
+                  key={child.id}
+                  className={cn(
+                    'p-3 cursor-pointer transition-all',
+                    selectedChildId === child.id
+                      ? 'border-2 border-primary bg-primary-light'
+                      : 'border-2 border-transparent hover:border-border'
                   )}
-                </div>
-              </Card>
-            ))}
-          </div>
+                  onClick={() => setSelectedChildId(child.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                        {child.first_name[0]}{child.last_name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-foreground text-sm truncate">
+                        {child.first_name}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {child.last_name}
+                      </p>
+                    </div>
+                    {selectedChildId === child.id && (
+                      <Check size={18} className="text-primary shrink-0" />
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-muted/50 rounded-xl p-6 text-center">
+              <p className="text-muted-foreground">Keine Kinder gefunden.</p>
+            </div>
+          )}
         </section>
 
         {/* Step 2: Select Type */}
-        {selectedChild && (
+        {selectedChildId && (
           <section className="animate-fade-in">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               2. Grund auswählen
@@ -121,7 +154,7 @@ export default function AbsencePage() {
         )}
 
         {/* Step 3: Optional Note */}
-        {selectedChild && selectedType && (
+        {selectedChildId && selectedType && (
           <section className="animate-fade-in">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               3. Notiz (optional)
@@ -136,13 +169,21 @@ export default function AbsencePage() {
         )}
 
         {/* Submit Button */}
-        {selectedChild && selectedType && (
+        {selectedChildId && selectedType && (
           <Button
             size="lg"
             className="w-full animate-slide-up"
             onClick={handleSubmit}
+            disabled={createAbsence.isPending}
           >
-            Abwesenheit melden
+            {createAbsence.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Wird gespeichert...
+              </>
+            ) : (
+              'Abwesenheit melden'
+            )}
           </Button>
         )}
       </div>
