@@ -1,4 +1,4 @@
-import { Home, MessageCircle, Calendar, BookOpen, Users } from 'lucide-react';
+import { Home, MessageCircle, Calendar, BookOpen, ClipboardList } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +14,7 @@ const navItems: NavItem[] = [
   { icon: MessageCircle, label: 'Chat', path: '/chat', badge: 2 },
   { icon: Calendar, label: 'Kalender', path: '/calendar' },
   { icon: BookOpen, label: 'Tagebuch', path: '/diary' },
-  { icon: Users, label: 'Kinder', path: '/children' },
+  { icon: ClipboardList, label: 'Pinnwand', path: '/pinnwand' },
 ];
 
 export function BottomNav() {
