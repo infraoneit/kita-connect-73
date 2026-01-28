@@ -10,6 +10,7 @@ import CalendarPage from "./pages/CalendarPage";
 import DiaryPage from "./pages/DiaryPage";
 import ChildrenPage from "./pages/ChildrenPage";
 import AbsencePage from "./pages/AbsencePage";
+import PinnwandPage from "./pages/PinnwandPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/diary" element={<DiaryPage />} />
             <Route path="/children" element={<ChildrenPage />} />
             <Route path="/absence" element={<AbsencePage />} />
+            <Route path="/pinnwand" element={<PinnwandPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

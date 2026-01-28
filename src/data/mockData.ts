@@ -217,7 +217,7 @@ export const pinnedPosts: PinnedPost[] = [
   {
     id: 'post-1',
     title: 'Faschingsfeier am 28. Februar',
-    content: 'Liebe Eltern, am 28. Februar findet unsere große Faschingsfeier statt. Die Kinder dürfen verkleidet kommen. Bitte keine Waffen oder gruseligen Kostüme.',
+    content: 'Liebe Eltern, am 28. Februar findet unsere große Faschingsfeier statt. Die Kinder dürfen verkleidet kommen. Bitte keine Waffen oder gruseligen Kostüme.\n\nWir freuen uns auf einen bunten und fröhlichen Tag mit allen Kindern!\n\nBitte beachten Sie:\n- Die Feier beginnt um 10:00 Uhr\n- Abholung ist bis 14:00 Uhr möglich\n- Bitte geben Sie den Kindern ein kleines Frühstück mit',
     author: 'Kita-Leitung',
     createdAt: '2026-01-25T10:00:00Z',
     important: true,
@@ -226,22 +226,50 @@ export const pinnedPosts: PinnedPost[] = [
   {
     id: 'post-2',
     title: 'Elternabend Termine',
-    content: 'Die Elternabende für das Frühjahr finden am 15.02 (Sonnenkäfer) und 16.02 (Schmetterlinge) statt. Beginn jeweils 19:00 Uhr.',
+    content: 'Die Elternabende für das Frühjahr finden am 15.02 (Sonnenkäfer) und 16.02 (Schmetterlinge) statt. Beginn jeweils 19:00 Uhr.\n\nThemen:\n- Rückblick auf das erste Halbjahr\n- Planung Sommerfest\n- Entwicklungsberichte\n\nWir bitten um Rückmeldung bis zum 10.02.',
     author: 'Kita-Leitung',
     createdAt: '2026-01-22T14:30:00Z',
     important: false,
     attachments: [
-      { id: 'att-1', type: 'document', url: '#', name: 'Einladung_Elternabend.pdf' }
+      { id: 'att-1', type: 'document', url: '#', name: 'Einladung_Elternabend.pdf' },
+      { id: 'att-2', type: 'document', url: '#', name: 'Tagesordnung.pdf' }
     ],
     groupIds: ['group-1', 'group-2'],
   },
   {
     id: 'post-3',
     title: 'Neue Öffnungszeiten ab März',
-    content: 'Ab 1. März gelten neue Öffnungszeiten: Mo-Fr 7:00 - 17:00 Uhr. Bei Fragen wenden Sie sich bitte an die Leitung.',
+    content: 'Ab 1. März gelten neue Öffnungszeiten: Mo-Fr 7:00 - 17:00 Uhr. Bei Fragen wenden Sie sich bitte an die Leitung.\n\nDie erweiterten Öffnungszeiten ermöglichen Ihnen mehr Flexibilität bei der Betreuung.',
     author: 'Kita-Leitung',
     createdAt: '2026-01-20T09:00:00Z',
     important: true,
+    attachments: [
+      { id: 'att-3', type: 'document', url: '#', name: 'Neue_Oeffnungszeiten.pdf' }
+    ],
+    groupIds: ['group-1', 'group-2'],
+  },
+  {
+    id: 'post-4',
+    title: 'Essensplan KW 05',
+    content: 'Der neue Essensplan für die Kalenderwoche 05 ist verfügbar. Bei Allergien oder Unverträglichkeiten sprechen Sie bitte die Gruppenleitung an.',
+    author: 'Küche',
+    createdAt: '2026-01-27T08:00:00Z',
+    important: false,
+    attachments: [
+      { id: 'att-4', type: 'document', url: '#', name: 'Essensplan_KW05.pdf' }
+    ],
+    groupIds: ['group-1', 'group-2'],
+  },
+  {
+    id: 'post-5',
+    title: 'Schließtage 2026',
+    content: 'Bitte beachten Sie unsere Schließtage für das Jahr 2026. Die vollständige Liste finden Sie im angehängten Dokument.',
+    author: 'Kita-Leitung',
+    createdAt: '2026-01-15T10:00:00Z',
+    important: false,
+    attachments: [
+      { id: 'att-5', type: 'document', url: '#', name: 'Schliesstage_2026.pdf' }
+    ],
     groupIds: ['group-1', 'group-2'],
   },
 ];
