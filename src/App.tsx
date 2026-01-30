@@ -5,15 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { AppLayout } from "./components/layout/AppLayout";
-import Index from "./pages/Index";
+import { AdminLayout } from "./components/layout/AdminLayout";
 import AuthPage from "./pages/AuthPage";
-import ChatPage from "./pages/ChatPage";
-import CalendarPage from "./pages/CalendarPage";
-import DiaryPage from "./pages/DiaryPage";
-import ChildrenPage from "./pages/ChildrenPage";
-import AbsencePage from "./pages/AbsencePage";
-import PinnwandPage from "./pages/PinnwandPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import VerwaltungPage from "./pages/VerwaltungPage";
+import VertraegePage from "./pages/VertraegePage";
+import BelegungPage from "./pages/BelegungPage";
+import PersonalPage from "./pages/PersonalPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,18 +29,16 @@ const App = () => (
               path="/*"
               element={
                 <ProtectedRoute>
-                  <AppLayout>
+                  <AdminLayout>
                     <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/chat" element={<ChatPage />} />
-                      <Route path="/calendar" element={<CalendarPage />} />
-                      <Route path="/diary" element={<DiaryPage />} />
-                      <Route path="/children" element={<ChildrenPage />} />
-                      <Route path="/absence" element={<AbsencePage />} />
-                      <Route path="/pinnwand" element={<PinnwandPage />} />
+                      <Route path="/" element={<AdminDashboard />} />
+                      <Route path="/verwaltung" element={<VerwaltungPage />} />
+                      <Route path="/vertraege" element={<VertraegePage />} />
+                      <Route path="/belegung" element={<BelegungPage />} />
+                      <Route path="/personal" element={<PersonalPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
-                  </AppLayout>
+                  </AdminLayout>
                 </ProtectedRoute>
               }
             />

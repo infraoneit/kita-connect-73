@@ -199,6 +199,67 @@ export type Database = {
         }
         Relationships: []
       }
+      child_bookings: {
+        Row: {
+          child_id: string
+          contract_id: string | null
+          created_at: string
+          date: string
+          end_time: string
+          group_id: string | null
+          id: string
+          is_extra: boolean | null
+          notes: string | null
+          start_time: string
+        }
+        Insert: {
+          child_id: string
+          contract_id?: string | null
+          created_at?: string
+          date: string
+          end_time: string
+          group_id?: string | null
+          id?: string
+          is_extra?: boolean | null
+          notes?: string | null
+          start_time: string
+        }
+        Update: {
+          child_id?: string
+          contract_id?: string | null
+          created_at?: string
+          date?: string
+          end_time?: string
+          group_id?: string | null
+          id?: string
+          is_extra?: boolean | null
+          notes?: string | null
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_bookings_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_bookings_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_bookings_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       child_guardians: {
         Row: {
           can_pickup: boolean | null
@@ -258,6 +319,7 @@ export type Database = {
           id: string
           last_name: string
           photo_permission: boolean | null
+          primary_guardian_id: string | null
           updated_at: string
         }
         Insert: {
@@ -270,6 +332,7 @@ export type Database = {
           id?: string
           last_name: string
           photo_permission?: boolean | null
+          primary_guardian_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -282,6 +345,7 @@ export type Database = {
           id?: string
           last_name?: string
           photo_permission?: boolean | null
+          primary_guardian_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -290,6 +354,126 @@ export type Database = {
             columns: ["group_id"]
             isOneToOne: false
             referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "children_primary_guardian_id_fkey"
+            columns: ["primary_guardian_id"]
+            isOneToOne: false
+            referencedRelation: "guardians"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_booking_times: {
+        Row: {
+          contract_id: string
+          created_at: string
+          end_time: string
+          id: string
+          start_time: string
+          weekday: Database["public"]["Enums"]["weekday"]
+        }
+        Insert: {
+          contract_id: string
+          created_at?: string
+          end_time: string
+          id?: string
+          start_time: string
+          weekday: Database["public"]["Enums"]["weekday"]
+        }
+        Update: {
+          contract_id?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          start_time?: string
+          weekday?: Database["public"]["Enums"]["weekday"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_booking_times_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contracts: {
+        Row: {
+          additional_fees: number | null
+          child_id: string
+          contract_number: string | null
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          created_at: string
+          discount_percent: number | null
+          end_date: string | null
+          guardian_id: string
+          id: string
+          meal_fee: number | null
+          monthly_fee: number | null
+          notes: string | null
+          special_agreements: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["contract_status"]
+          subsidy_amount: number | null
+          termination_notice_period: number | null
+          updated_at: string
+        }
+        Insert: {
+          additional_fees?: number | null
+          child_id: string
+          contract_number?: string | null
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          created_at?: string
+          discount_percent?: number | null
+          end_date?: string | null
+          guardian_id: string
+          id?: string
+          meal_fee?: number | null
+          monthly_fee?: number | null
+          notes?: string | null
+          special_agreements?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["contract_status"]
+          subsidy_amount?: number | null
+          termination_notice_period?: number | null
+          updated_at?: string
+        }
+        Update: {
+          additional_fees?: number | null
+          child_id?: string
+          contract_number?: string | null
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          created_at?: string
+          discount_percent?: number | null
+          end_date?: string | null
+          guardian_id?: string
+          id?: string
+          meal_fee?: number | null
+          monthly_fee?: number | null
+          notes?: string | null
+          special_agreements?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["contract_status"]
+          subsidy_amount?: number | null
+          termination_notice_period?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_guardian_id_fkey"
+            columns: ["guardian_id"]
+            isOneToOne: false
+            referencedRelation: "guardians"
             referencedColumns: ["id"]
           },
         ]
@@ -520,6 +704,51 @@ export type Database = {
         }
         Relationships: []
       }
+      guardians: {
+        Row: {
+          address_city: string | null
+          address_street: string | null
+          address_zip: string | null
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          notes: string | null
+          phone: string | null
+          phone_secondary: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_city?: string | null
+          address_street?: string | null
+          address_zip?: string | null
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          notes?: string | null
+          phone?: string | null
+          phone_secondary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_city?: string | null
+          address_street?: string | null
+          address_zip?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          notes?: string | null
+          phone?: string | null
+          phone_secondary?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -595,6 +824,218 @@ export type Database = {
         }
         Relationships: []
       }
+      staff: {
+        Row: {
+          created_at: string
+          email: string | null
+          employment_end: string | null
+          employment_start: string | null
+          first_name: string
+          hourly_rate: number | null
+          id: string
+          is_active: boolean | null
+          last_name: string
+          notes: string | null
+          phone: string | null
+          position: string | null
+          profile_id: string | null
+          updated_at: string
+          weekly_hours: number | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          employment_end?: string | null
+          employment_start?: string | null
+          first_name: string
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_name: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          profile_id?: string | null
+          updated_at?: string
+          weekly_hours?: number | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          employment_end?: string | null
+          employment_start?: string | null
+          first_name?: string
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_name?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string | null
+          profile_id?: string | null
+          updated_at?: string
+          weekly_hours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_group_assignments: {
+        Row: {
+          created_at: string
+          group_id: string
+          id: string
+          is_primary: boolean | null
+          staff_id: string
+        }
+        Insert: {
+          created_at?: string
+          group_id: string
+          id?: string
+          is_primary?: boolean | null
+          staff_id: string
+        }
+        Update: {
+          created_at?: string
+          group_id?: string
+          id?: string
+          is_primary?: boolean | null
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_group_assignments_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_group_assignments_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_leave: {
+        Row: {
+          approved: boolean | null
+          approved_by: string | null
+          created_at: string
+          end_date: string
+          id: string
+          leave_type: Database["public"]["Enums"]["leave_type"]
+          notes: string | null
+          staff_id: string
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean | null
+          approved_by?: string | null
+          created_at?: string
+          end_date: string
+          id?: string
+          leave_type: Database["public"]["Enums"]["leave_type"]
+          notes?: string | null
+          staff_id: string
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean | null
+          approved_by?: string | null
+          created_at?: string
+          end_date?: string
+          id?: string
+          leave_type?: Database["public"]["Enums"]["leave_type"]
+          notes?: string | null
+          staff_id?: string
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_leave_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_leave_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_shifts: {
+        Row: {
+          break_minutes: number | null
+          created_at: string
+          date: string
+          end_time: string
+          group_id: string | null
+          id: string
+          notes: string | null
+          shift_type: Database["public"]["Enums"]["staff_shift_type"]
+          staff_id: string
+          start_time: string
+          updated_at: string
+        }
+        Insert: {
+          break_minutes?: number | null
+          created_at?: string
+          date: string
+          end_time: string
+          group_id?: string | null
+          id?: string
+          notes?: string | null
+          shift_type?: Database["public"]["Enums"]["staff_shift_type"]
+          staff_id: string
+          start_time: string
+          updated_at?: string
+        }
+        Update: {
+          break_minutes?: number | null
+          created_at?: string
+          date?: string
+          end_time?: string
+          group_id?: string | null
+          id?: string
+          notes?: string | null
+          shift_type?: Database["public"]["Enums"]["staff_shift_type"]
+          staff_id?: string
+          start_time?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_shifts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_shifts_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -641,7 +1082,12 @@ export type Database = {
       absence_type: "sick" | "vacation" | "late" | "early_pickup" | "other"
       app_role: "parent" | "educator" | "manager" | "admin"
       attendance_status: "present" | "absent" | "late" | "not_arrived"
+      contract_status: "active" | "pending" | "terminated" | "expired"
+      contract_type: "flexible" | "halbtags" | "ganztags" | "stundenweise"
       event_type: "event" | "closure" | "meeting" | "reminder"
+      leave_type: "vacation" | "sick" | "training" | "other"
+      staff_shift_type: "morning" | "afternoon" | "full_day" | "custom"
+      weekday: "monday" | "tuesday" | "wednesday" | "thursday" | "friday"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -772,7 +1218,12 @@ export const Constants = {
       absence_type: ["sick", "vacation", "late", "early_pickup", "other"],
       app_role: ["parent", "educator", "manager", "admin"],
       attendance_status: ["present", "absent", "late", "not_arrived"],
+      contract_status: ["active", "pending", "terminated", "expired"],
+      contract_type: ["flexible", "halbtags", "ganztags", "stundenweise"],
       event_type: ["event", "closure", "meeting", "reminder"],
+      leave_type: ["vacation", "sick", "training", "other"],
+      staff_shift_type: ["morning", "afternoon", "full_day", "custom"],
+      weekday: ["monday", "tuesday", "wednesday", "thursday", "friday"],
     },
   },
 } as const
