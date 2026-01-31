@@ -127,6 +127,11 @@ export default function AuthPage() {
     );
   }
 
+  const fillDemoCredentials = () => {
+    setLoginEmail('admin@kita-demo.ch');
+    setLoginPassword('Demo2026!');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
       <Card className="w-full max-w-md">
@@ -136,10 +141,27 @@ export default function AuthPage() {
           </div>
           <CardTitle className="text-2xl font-bold">KitaConnect</CardTitle>
           <CardDescription>
-            Verbindet Eltern, Erzieher und Kita
+            Admin-Management für Ihre Kita
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Demo Credentials Box */}
+          <div className="mb-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
+            <p className="text-sm font-medium text-primary mb-2">🔐 Demo-Zugangsdaten:</p>
+            <div className="space-y-1 text-sm">
+              <p><span className="text-muted-foreground">E-Mail:</span> <code className="bg-background px-1.5 py-0.5 rounded font-mono">admin@kita-demo.ch</code></p>
+              <p><span className="text-muted-foreground">Passwort:</span> <code className="bg-background px-1.5 py-0.5 rounded font-mono">Demo2026!</code></p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-3 w-full"
+              onClick={fillDemoCredentials}
+            >
+              Demo-Daten einfügen
+            </Button>
+          </div>
+
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Anmelden</TabsTrigger>
