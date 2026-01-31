@@ -1,6 +1,7 @@
-import { ChevronLeft, Settings, Bell } from 'lucide-react';
+import { ChevronLeft, Settings, Bell, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface PageHeaderProps {
   title: string;
@@ -8,6 +9,7 @@ interface PageHeaderProps {
   showBack?: boolean;
   showSettings?: boolean;
   showNotifications?: boolean;
+  showLogout?: boolean;
   notificationCount?: number;
   rightAction?: React.ReactNode;
 }
@@ -18,10 +20,17 @@ export function PageHeader({
   showBack = false,
   showSettings = false,
   showNotifications = false,
+  showLogout = true,
   notificationCount = 0,
   rightAction,
 }: PageHeaderProps) {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
@@ -57,6 +66,11 @@ export function PageHeader({
           {showSettings && (
             <Button variant="ghost" size="iconSm">
               <Settings size={22} />
+            </Button>
+          )}
+          {showLogout && (
+            <Button variant="ghost" size="iconSm" onClick={handleLogout} title="Abmelden">
+              <LogOut size={20} />
             </Button>
           )}
           {rightAction}
