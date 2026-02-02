@@ -11,6 +11,8 @@ import { de } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Baby, UserCog } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
+import { BookingDialog } from '@/components/belegung/BookingDialog';
+import { ShiftDialog } from '@/components/belegung/ShiftDialog';
 
 type ViewMode = 'day' | 'week' | 'month';
 type DisplayMode = 'children' | 'staff';
@@ -20,6 +22,11 @@ export default function BelegungPage() {
   const [displayMode, setDisplayMode] = useState<DisplayMode>('children');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedGroup, setSelectedGroup] = useState<string>('all');
+  
+  // Dialog states
+  const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
+  const [shiftDialogOpen, setShiftDialogOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   const { data: groups } = useGroups();
 
@@ -78,6 +85,24 @@ export default function BelegungPage() {
 
   const timeSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
 
+  const handleAddNew = () => {
+    setSelectedDate(currentDate);
+    if (displayMode === 'children') {
+      setBookingDialogOpen(true);
+    } else {
+      setShiftDialogOpen(true);
+    }
+  };
+
+  const handleDayClick = (day: Date) => {
+    setSelectedDate(day);
+    if (displayMode === 'children') {
+      setBookingDialogOpen(true);
+    } else {
+      setShiftDialogOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen pb-24">
       <PageHeader
@@ -90,7 +115,7 @@ export default function BelegungPage() {
             : format(currentDate, 'MMMM yyyy', { locale: de })
         }
         rightAction={
-          <Button variant="ghost" size="iconSm">
+          <Button variant="ghost" size="iconSm" onClick={handleAddNew}>
             <Plus size={20} />
           </Button>
         }
@@ -186,7 +211,11 @@ export default function BelegungPage() {
                       });
                   
                   return (
-                    <div key={time} className="flex">
+                    <div 
+                      key={time} 
+                      className="flex cursor-pointer hover:bg-secondary/30"
+                      onClick={() => handleDayClick(currentDate)}
+                    >
                       <div className="w-16 py-3 px-2 text-xs text-muted-foreground border-r border-border">
                         {time}
                       </div>
@@ -231,9 +260,10 @@ export default function BelegungPage() {
                     <div 
                       key={day.toISOString()} 
                       className={cn(
-                        "p-2 text-center border-r border-border last:border-r-0",
+                        "p-2 text-center border-r border-border last:border-r-0 cursor-pointer hover:bg-secondary/30",
                         isToday(day) && "bg-primary/10"
                       )}
+                      onClick={() => handleDayClick(day)}
                     >
                       <p className="text-xs text-muted-foreground">{format(day, 'EEE', { locale: de })}</p>
                       <p className={cn(
@@ -264,9 +294,10 @@ export default function BelegungPage() {
                         <div 
                           key={day.toISOString()} 
                           className={cn(
-                            "p-1 min-h-[40px] border-r border-border last:border-r-0",
+                            "p-1 min-h-[40px] border-r border-border last:border-r-0 cursor-pointer hover:bg-secondary/30",
                             isToday(day) && "bg-primary/5"
                           )}
+                          onClick={() => handleDayClick(day)}
                         >
                           {displayMode === 'children' ? (
                             dayBookings.slice(0, 2).map((b: any) => (
@@ -329,10 +360,11 @@ export default function BelegungPage() {
                     <div
                       key={day.toISOString()}
                       className={cn(
-                        "aspect-square p-1 rounded-lg text-center cursor-pointer hover:bg-secondary/50",
+                        "aspect-square p-1 rounded-lg text-center cursor-pointer hover:bg-secondary/50 transition-colors",
                         isToday(day) && "bg-primary text-primary-foreground",
                         dayData.length > 0 && !isToday(day) && "bg-secondary"
                       )}
+                      onClick={() => handleDayClick(day)}
                     >
                       <span className="text-xs font-medium">{format(day, 'd')}</span>
                       {dayData.length > 0 && (
@@ -381,6 +413,18 @@ export default function BelegungPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Dialogs */}
+      <BookingDialog
+        open={bookingDialogOpen}
+        onOpenChange={setBookingDialogOpen}
+        selectedDate={selectedDate}
+      />
+      <ShiftDialog
+        open={shiftDialogOpen}
+        onOpenChange={setShiftDialogOpen}
+        selectedDate={selectedDate}
+      />
     </div>
   );
 }
