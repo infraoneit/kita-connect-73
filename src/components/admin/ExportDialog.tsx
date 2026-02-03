@@ -41,36 +41,53 @@ export function ExportDialog({ open, onOpenChange, data, activeTab }: ExportDial
     let filename = '';
 
     if (activeTab === 'children') {
-      const headers = ['Vorname', 'Nachname', 'Geburtsdatum', 'Gruppe', 'Elternteil', 'Telefon', 'E-Mail', 'Allergien'];
+      // Extended headers for table view
+      const headers = [
+        'Name (Eltern)', 'Vorname (Eltern)', 'Vorname Kind', 'Nachname Kind',
+        'Adresszusatz', 'Geburtsdatum', 'Adresse', 'PLZ', 'Ort',
+        'Telefon Privat', 'Natel', 'Telefon Geschäftlich', 'E-Mail',
+        'Gruppe', 'Vertragsstatus', 'Vertragsende'
+      ];
       csvContent = headers.join(';') + '\n';
       
       data.children.forEach(child => {
+        const guardian = child.primary_guardian;
+        const contract = child.contracts?.[0];
         const row = [
+          guardian?.last_name || '',
+          guardian?.first_name || '',
           child.first_name,
           child.last_name,
+          guardian?.address_street?.split(',')[1]?.trim() || '',
           child.birth_date ? format(new Date(child.birth_date), 'dd.MM.yyyy') : '',
+          guardian?.address_street?.split(',')[0]?.trim() || guardian?.address_street || '',
+          guardian?.address_zip || '',
+          guardian?.address_city || '',
+          guardian?.phone || '',
+          guardian?.phone_secondary || '',
+          '', // Geschäftstelefon
+          guardian?.email || '',
           child.groups?.name || '',
-          child.primary_guardian ? `${child.primary_guardian.first_name} ${child.primary_guardian.last_name}` : '',
-          child.primary_guardian?.phone || '',
-          child.primary_guardian?.email || '',
-          (child.allergies || []).join(', '),
+          contract?.status || '',
+          contract?.end_date ? format(new Date(contract.end_date), 'dd.MM.yyyy') : '',
         ];
         csvContent += row.join(';') + '\n';
       });
       filename = `kinder_export_${format(new Date(), 'yyyy-MM-dd')}.csv`;
     } else if (activeTab === 'guardians') {
-      const headers = ['Vorname', 'Nachname', 'E-Mail', 'Telefon', 'Telefon 2', 'Adresse'];
+      const headers = ['Vorname', 'Nachname', 'E-Mail', 'Telefon', 'Telefon 2', 'Strasse', 'PLZ', 'Ort'];
       csvContent = headers.join(';') + '\n';
       
       data.guardians.forEach(g => {
-        const address = [g.address_street, g.address_zip, g.address_city].filter(Boolean).join(' ');
         const row = [
           g.first_name,
           g.last_name,
           g.email || '',
           g.phone || '',
           g.phone_secondary || '',
-          address,
+          g.address_street || '',
+          g.address_zip || '',
+          g.address_city || '',
         ];
         csvContent += row.join(';') + '\n';
       });
@@ -110,13 +127,18 @@ export function ExportDialog({ open, onOpenChange, data, activeTab }: ExportDial
         <title>Export</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; }
-          h1 { color: #333; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #4A9D8E; color: white; }
+          h1 { color: #E91E8C; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 11px; }
+          th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
+          th { background-color: #E91E8C; color: white; }
           tr:nth-child(even) { background-color: #f9f9f9; }
+          tr.exiting { background-color: #FEF3C7; }
           .header { margin-bottom: 20px; }
           .date { color: #666; font-size: 12px; }
+          .legend { margin-top: 15px; font-size: 11px; color: #666; }
+          .legend-item { display: inline-flex; align-items: center; margin-right: 20px; }
+          .legend-box { width: 15px; height: 15px; margin-right: 5px; border: 1px solid #ccc; }
+          .exiting-box { background-color: #FEF3C7; }
         </style>
       </head>
       <body>
@@ -130,22 +152,41 @@ export function ExportDialog({ open, onOpenChange, data, activeTab }: ExportDial
       content += `
         <table>
           <tr>
-            <th>Name</th>
-            <th>Geburtsdatum</th>
+            <th>Name (Eltern)</th>
+            <th>Vorname (Eltern)</th>
+            <th>Kind</th>
+            <th>Geburt</th>
+            <th>Adresse</th>
+            <th>PLZ/Ort</th>
+            <th>Tel. Privat</th>
+            <th>Natel</th>
+            <th>E-Mail</th>
             <th>Gruppe</th>
-            <th>Elternteil</th>
-            <th>Kontakt</th>
           </tr>
-          ${data.children.map(child => `
-            <tr>
-              <td>${child.first_name} ${child.last_name}</td>
-              <td>${child.birth_date ? format(new Date(child.birth_date), 'dd.MM.yyyy') : ''}</td>
-              <td>${child.groups?.name || '-'}</td>
-              <td>${child.primary_guardian ? `${child.primary_guardian.first_name} ${child.primary_guardian.last_name}` : '-'}</td>
-              <td>${child.primary_guardian?.phone || ''}<br/>${child.primary_guardian?.email || ''}</td>
-            </tr>
-          `).join('')}
+          ${data.children.map(child => {
+            const guardian = child.primary_guardian;
+            const contract = child.contracts?.[0];
+            const endDate = contract?.end_date ? new Date(contract.end_date) : null;
+            const isExiting = endDate && (endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24) <= 30 && (endDate.getTime() - new Date().getTime()) >= 0;
+            return `
+              <tr class="${isExiting ? 'exiting' : ''}">
+                <td>${guardian?.last_name || '-'}</td>
+                <td>${guardian?.first_name || '-'}</td>
+                <td>${child.first_name} ${child.last_name}</td>
+                <td>${child.birth_date ? format(new Date(child.birth_date), 'dd.MM.yyyy') : ''}</td>
+                <td>${guardian?.address_street || '-'}</td>
+                <td>${guardian?.address_zip || ''} ${guardian?.address_city || ''}</td>
+                <td>${guardian?.phone || '-'}</td>
+                <td>${guardian?.phone_secondary || '-'}</td>
+                <td>${guardian?.email || '-'}</td>
+                <td>${child.groups?.name || '-'}</td>
+              </tr>
+            `;
+          }).join('')}
         </table>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-box exiting-box"></div> Austritt innerhalb 30 Tagen</div>
+        </div>
       `;
     } else if (activeTab === 'guardians') {
       content += `

@@ -32,6 +32,8 @@ export default {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          light: "hsl(var(--secondary-light))",
+          hover: "hsl(var(--secondary-hover))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -56,6 +58,11 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
           light: "hsl(var(--warning-light))",
+        },
+        exiting: {
+          DEFAULT: "hsl(var(--exiting))",
+          foreground: "hsl(var(--exiting-foreground))",
+          light: "hsl(var(--exiting-light))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
